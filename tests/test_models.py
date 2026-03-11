@@ -2,7 +2,7 @@
 """Tests for skill data models."""
 import pytest
 from pathlib import Path
-from models import Skill, DuplicateGroup, SimilarityCandidate
+from skill_auditor.models import Skill, DuplicateGroup, SimilarityCandidate
 
 
 def test_skill_creation():
