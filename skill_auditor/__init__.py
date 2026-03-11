@@ -1,4 +1,14 @@
-"""Skill Auditor CLI tool for auditing Claude Code skills."""
+"""Skill Auditor - Audit Claude Code skills for duplicates."""
+import typer
 
-# Placeholder for CLI app - will be implemented in Task 9
-app = None
+app = typer.Typer(help="Audit Claude Code skills for duplicates")
+
+
+@app.command()
+def main():
+    """Placeholder for full CLI implementation."""
+    print("Skill Auditor CLI not yet implemented. See docs/plans/ for implementation plan.")
+
+
+if __name__ == "__main__":
+    app()
