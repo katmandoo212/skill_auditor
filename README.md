@@ -4,7 +4,7 @@ Audit Claude Code skills for duplicates and similarity.
 
 ## Features
 
-- **Skill Discovery**: Automatically finds all `SKILL.md` files in Claude Code plugin cache directories
+- **Skill Discovery**: Automatically finds all `SKILL.md` files in Claude Code plugin marketplaces and user skills directories
 - **Metadata Parsing**: Extracts frontmatter metadata (name, description, triggers) from skill files
 - **Embedding Generation**: Uses sentence-transformers to create semantic embeddings of skill content
 - **Similarity Detection**: Finds potentially duplicate skills using cosine similarity
@@ -56,7 +56,7 @@ skill-auditor -v
 
 | Option | Short | Default | Description |
 |--------|-------|---------|-------------|
-| `--path` | `-p` | `~/.claude/plugins/cache` | Paths to scan for skills (can be specified multiple times) |
+| `--path` | `-p` | `~/.claude/plugins/marketplaces`, `~/.claude/skills` | Paths to scan for skills (can be specified multiple times) |
 | `--output` | `-o` | `skill_audit_report.md` | Output markdown file path |
 | `--threshold` | `-t` | `0.8` | Embedding similarity threshold (0.0-1.0) |
 | `--model` | `-m` | `glm-5:cloud` | Ollama model for LLM evaluation |
@@ -119,6 +119,7 @@ uv run pytest tests/test_integration.py
 ```
 skill_auditor/
 ├── __init__.py      # CLI entry point
+├── __main__.py     # Package runner wrapper
 ├── config.py       # Configuration defaults
 ├── models.py       # Data models (Skill, DuplicateGroup, SimilarityCandidate)
 ├── scanner.py      # Skill discovery and parsing
