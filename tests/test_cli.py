@@ -2,12 +2,14 @@
 """Tests for CLI."""
 import pytest
 from typer.testing import CliRunner
+import typer
+from skill_auditor import main
 
 
 def test_cli_help():
     """Test CLI shows help."""
-    from skill_auditor import app
-
+    app = typer.Typer()
+    app.command()(main)
     runner = CliRunner()
     result = runner.invoke(app, ["--help"])
 
@@ -17,8 +19,8 @@ def test_cli_help():
 
 def test_cli_version():
     """Test CLI version flag works."""
-    from skill_auditor import app
-
+    app = typer.Typer()
+    app.command()(main)
     runner = CliRunner()
     result = runner.invoke(app, ["--version"])
 

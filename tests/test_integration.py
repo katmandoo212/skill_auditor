@@ -73,9 +73,9 @@ def test_full_pipeline_discover_parse(sample_skills):
     code_review = next(s for s in skills if s.skill_name == "code-review")
     assert code_review.display_name == "Code Review"
     assert "review code" in code_review.triggers
-    # Plugin name is 'unknown' because test paths don't have 'cache' in them
-    # (the parser looks for 'cache/<plugin-name>' pattern)
-    assert code_review.plugin_name == "unknown"
+    # Plugin name is 'user-skills' because test paths don't have 'plugins' in them
+    # (the parser defaults to 'user-skills' when no plugin is found)
+    assert code_review.plugin_name == "user-skills"
 
 
 def test_full_pipeline_with_mocked_embeddings(sample_skills):
@@ -129,8 +129,11 @@ def test_full_pipeline_with_mocked_embeddings(sample_skills):
 
 def test_cli_help():
     """Test CLI shows help."""
-    from skill_auditor import app
+    import typer
+    from skill_auditor import main
 
+    app = typer.Typer()
+    app.command()(main)
     runner = CliRunner()
     result = runner.invoke(app, ["--help"])
 
@@ -140,8 +143,11 @@ def test_cli_help():
 
 def test_cli_version():
     """Test CLI version flag works."""
-    from skill_auditor import app
+    import typer
+    from skill_auditor import main
 
+    app = typer.Typer()
+    app.command()(main)
     runner = CliRunner()
     result = runner.invoke(app, ["--version"])
 
@@ -153,15 +159,17 @@ def test_cli_version():
 @patch("skill_auditor.generate_embeddings")
 def test_cli_scan_with_path(mock_embeddings, mock_ollama, sample_skills):
     """Test CLI scan command with custom path."""
-    from skill_auditor import app
+    import typer
+    from skill_auditor import main
     import numpy as np
 
     # Mock the embeddings to return array of zeros
     mock_embeddings.return_value = np.zeros((3, 384))
 
+    app = typer.Typer()
+    app.command()(main)
     runner = CliRunner()
-    # The main function is registered as a command named "main"
-    result = runner.invoke(app, ["main", "-p", str(sample_skills), "-o", str(sample_skills / "report.md")])
+    result = runner.invoke(app, ["-p", str(sample_skills), "-o", str(sample_skills / "report.md")])
 
     # Should complete without error (though will find no duplicates)
     assert result.exit_code == 0, f"CLI failed with: {result.output}"

@@ -72,8 +72,8 @@ Content."""
 
 def test_parse_skill(tmp_path):
     """Test parsing a SKILL.md file into a Skill object."""
-    # Path pattern: .../cache/<plugin-name>/.../skills/<skill-name>/SKILL.md
-    skill_dir = tmp_path / "cache" / "test-plugin" / "skills" / "test-skill"
+    # Path pattern: .../plugins/<plugin-name>/.../skills/<skill-name>/SKILL.md
+    skill_dir = tmp_path / "plugins" / "test-plugin" / "skills" / "test-skill"
     skill_dir.mkdir(parents=True)
     skill_file = skill_dir / "SKILL.md"
 
@@ -95,3 +95,24 @@ This is the skill content.
     assert result.description == "A test skill for testing"
     assert len(result.triggers) == 1
     assert "skill content" in result.content
+
+
+def test_parse_skill_user_skill(tmp_path):
+    """Test parsing a user skill (no plugin) returns user-skills as source."""
+    # Path pattern: .../skills/<skill-name>/SKILL.md (user skills, no plugin)
+    skill_dir = tmp_path / "skills" / "my-skill"
+    skill_dir.mkdir(parents=True)
+    skill_file = skill_dir / "SKILL.md"
+
+    content = """---
+name: My Skill
+description: A user skill
+---
+Content here.
+"""
+    skill_file.write_text(content)
+
+    result = parse_skill(skill_file)
+
+    assert result.skill_name == "my-skill"
+    assert result.plugin_name == "user-skills"

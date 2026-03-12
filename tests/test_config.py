@@ -3,7 +3,7 @@
 import pytest
 from pathlib import Path
 from skill_auditor.config import (
-    DEFAULT_PLUGIN_CACHE,
+    DEFAULT_SKILL_PATHS,
     DEFAULT_OUTPUT,
     DEFAULT_MODEL,
     DEFAULT_THRESHOLD,
@@ -12,10 +12,12 @@ from skill_auditor.config import (
 )
 
 
-def test_default_plugin_cache_path():
-    """Test default plugin cache path resolves correctly."""
-    assert DEFAULT_PLUGIN_CACHE.name == "cache"
-    assert ".claude" in str(DEFAULT_PLUGIN_CACHE)
+def test_default_skill_paths():
+    """Test default skill paths are configured correctly."""
+    assert len(DEFAULT_SKILL_PATHS) == 2
+    path_names = [p.name for p in DEFAULT_SKILL_PATHS]
+    assert "marketplaces" in path_names
+    assert "skills" in path_names
 
 
 def test_default_output_path():
@@ -25,7 +27,7 @@ def test_default_output_path():
 
 def test_default_model():
     """Test default Ollama model."""
-    assert DEFAULT_MODEL == "glm5:cloud"
+    assert DEFAULT_MODEL == "glm-5:cloud"
 
 
 def test_default_threshold():
