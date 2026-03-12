@@ -20,7 +20,7 @@ Audit Claude Code skills for duplicates and similarity.
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/skill_auditor.git
+git clone https://github.com/katmandoo212/skill_auditor.git
 cd skill_auditor
 
 # Install dependencies with uv
@@ -59,7 +59,7 @@ skill-auditor -v
 | `--path` | `-p` | `~/.claude/plugins/cache` | Paths to scan for skills (can be specified multiple times) |
 | `--output` | `-o` | `skill_audit_report.md` | Output markdown file path |
 | `--threshold` | `-t` | `0.8` | Embedding similarity threshold (0.0-1.0) |
-| `--model` | `-m` | `glm5:cloud` | Ollama model for LLM evaluation |
+| `--model` | `-m` | `glm-5:cloud` | Ollama model for LLM evaluation |
 | `--max-candidates` | | `10` | Maximum candidates per skill to send to LLM |
 | `--verbose` | `-v` | `False` | Enable verbose logging |
 | `--version` | | | Show version and exit |

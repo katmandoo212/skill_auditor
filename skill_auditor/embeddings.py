@@ -4,7 +4,7 @@ import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 from sentence_transformers import SentenceTransformer
 from skill_auditor.models import Skill, SimilarityCandidate
-from skill_auditor.config import CONTENT_TRUNCATE_LENGTH
+from skill_auditor.config import CONTENT_TRUNCATE_LENGTH, EMBEDDING_MODEL
 
 _model = None
 
@@ -13,7 +13,7 @@ def get_model() -> SentenceTransformer:
     """Lazy-load the embedding model."""
     global _model
     if _model is None:
-        _model = SentenceTransformer("all-MiniLM-L6-v2")
+        _model = SentenceTransformer(EMBEDDING_MODEL)
     return _model
 
 

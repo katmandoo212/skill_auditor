@@ -12,7 +12,7 @@ dependencies = [
 ]
 
 [project.scripts]
-skill-auditor = "skill_auditor:app"
+skill-auditor = "skill_auditor:run"
 
 [build-system]
 requires = ["hatchling"]

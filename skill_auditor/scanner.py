@@ -3,21 +3,21 @@
 import yaml
 from pathlib import Path
 from typing import Optional
-from skill_auditor.config import DEFAULT_PLUGIN_CACHE
+from skill_auditor.config import DEFAULT_SKILL_PATHS
 from skill_auditor.models import Skill
 
 
 def discover_skills(paths: Optional[list[Path]] = None) -> list[Path]:
-    """Find all SKILL.md files in given paths or default plugin cache.
+    """Find all SKILL.md files in given paths or default locations.
 
     Args:
-        paths: Optional list of paths to scan. Uses DEFAULT_PLUGIN_CACHE if None.
+        paths: Optional list of paths to scan. Uses DEFAULT_SKILL_PATHS if None.
 
     Returns:
         List of paths to SKILL.md files.
     """
     if paths is None:
-        paths = [DEFAULT_PLUGIN_CACHE]
+        paths = DEFAULT_SKILL_PATHS
 
     skill_files = []
     for base_path in paths:
@@ -76,18 +76,20 @@ def parse_skill(skill_path: Path) -> Skill:
     content = skill_path.read_text(encoding="utf-8")
     frontmatter, body = parse_frontmatter(content)
 
-    # Extract plugin name from path
-    # Path pattern: .../cache/<plugin-name>/.../skills/<skill-name>/SKILL.md
+    # Extract source name from path
+    # Patterns:
+    # .../marketplaces/<marketplace>/plugins/<plugin>/skills/<skill>/SKILL.md
+    # .../skills/<skill>/SKILL.md (user skills, no plugin)
     parts = skill_path.parts
-    plugin_name = "unknown"
+    source_name = "user-skills"
     for i, part in enumerate(parts):
-        if part == "cache" and i + 1 < len(parts):
-            plugin_name = parts[i + 1]
+        if part == "plugins" and i + 1 < len(parts):
+            source_name = parts[i + 1]
             break
 
     return Skill(
         path=skill_path,
-        plugin_name=plugin_name,
+        plugin_name=source_name,
         skill_name=skill_path.parent.name,
         display_name=frontmatter.get("name", ""),
         description=frontmatter.get("description", ""),

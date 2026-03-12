@@ -16,10 +16,13 @@ from skill_auditor.config import (
     DEFAULT_MAX_CANDIDATES,
 )
 
-app = typer.Typer(help="Audit Claude Code skills for duplicates and similarity")
+
+def _version_callback(value: bool):
+    if value:
+        typer.echo("skill-auditor version 0.1.0")
+        raise typer.Exit()
 
 
-@app.command()
 def main(
     paths: Optional[list[Path]] = typer.Option(
         None,
@@ -56,8 +59,15 @@ def main(
         "-v",
         help="Enable verbose logging",
     ),
+    version: bool = typer.Option(
+        False,
+        "--version",
+        callback=_version_callback,
+        is_eager=True,
+        help="Show version and exit",
+    ),
 ):
-    """Scan skills, find duplicates, generate report."""
+    """Audit Claude Code skills for duplicates and similarity."""
     level = logging.DEBUG if verbose else logging.INFO
     logging.basicConfig(level=level, format="%(asctime)s - %(levelname)s - %(message)s")
     logger = logging.getLogger(__name__)
@@ -104,12 +114,14 @@ def main(
         if result and "duplicates" in result:
             # Build group from result
             group_skills = [candidate.skill]
+            group_paths = {candidate.skill.path}  # Track paths already in group
             for dup in result.get("duplicates", []):
                 if dup.get("is_duplicate"):
                     # Find matching skill
                     for s in skills:
-                        if s.skill_name == dup.get("skill_name"):
+                        if s.skill_name == dup.get("skill_name") and s.path not in group_paths:
                             group_skills.append(s)
+                            group_paths.add(s.path)
                             evaluated_skills.add(s.path)
                             break
 
@@ -138,25 +150,10 @@ def main(
     logger.info(f"Found {len(duplicate_groups)} duplicate groups")
 
 
-def _version_callback(value: bool):
-    if value:
-        typer.echo("skill-auditor version 0.1.0")
-        raise typer.Exit()
-
-
-@app.callback()
-def version(
-    version: bool = typer.Option(
-        False,
-        "--version",
-        callback=_version_callback,
-        is_eager=True,
-        help="Show version and exit",
-    ),
-):
-    """Skill Auditor - Audit Claude Code skills for duplicates."""
-    pass
+def run():
+    """Entry point for the CLI."""
+    typer.run(main)
 
 
 if __name__ == "__main__":
-    app()
+    run()
